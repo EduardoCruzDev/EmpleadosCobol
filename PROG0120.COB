@@ -2,13 +2,13 @@
        PROGRAM-ID.                PROG0120.
        AUTHOR.                    EDUARDO CRUZ.
        INSTALLATION.              CAPACITACION.
-       DATE-WRITEEN.              22/03/25.
+       DATE-WRITTEN.              22/03/25.
        DATE-COMPILED.
        SECURITY.                  NO ES CONFIDENCIAL.
-       *---------------------------------------------------------------*
-       *OBJETIVO: LEER E IMPRIMIR EL ARCHIVO DE LOS EMPREADOS          *
-       *          DE LA EMPRESA                                        *
-       *---------------------------------------------------------------*
+       *>---------------------------------------------------------------*
+       *>OBJETIVO: LEER E IMPRIMIR EL ARCHIVO DE LOS EMPREADOS          *
+       *>          DE LA EMPRESA                                        *
+       *>---------------------------------------------------------------*
 
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
@@ -50,28 +50,28 @@
           05 WS-TOTAL-SALARIOS     PIC 9(09)V99 VALUE ZEROS.
 
        01 WS-TITULO-1.
-          05 FILLER                PIC X(28)    VALUE SPACES.                                                                 C
+          05 FILLER                PIC X(28)    VALUE SPACES.
           05 WS-TIT-1              PIC X(23)
                                    VALUE "EMPLEADOS DE LA EMPRESA".
-          05 FILLER                PIC X(29)    VALUE SPACES.                                                                 C
+          05 FILLER                PIC X(29)    VALUE SPACES.
 
        01 WS-DETALLE.
           05 FILLER                PIC X(15)    VALUE SPACES.
-          05 WS-DETALLE-TODO       PIC X(50).
+          05 WS-DET-TODO           PIC X(50).
           05 FILLER                PIC X(15)    VALUE SPACES.
 
        01 WS-DETALLE-LEIDOS.
-          05 FILLER                PIC X(01)
+          05 FILLER                PIC X(01).
           05 FILLER                PIC X(29)
-                                   VALUE "TOTAL DE EMPLEADOS LEIDOS  : ".
+                                   VALUE "TOTAL DE EMPLEADOS LEIDOS:".
           05 WS-TOT-LEIDOS         PIC 9(05).
           05 FILLER                PIC X(45)    VALUE SPACES.
-       01 WS-DETALLE-IMPRESOS REDEFINES WS-DETALLE-LEIDOS.
-          05 FILLER                PIC X(01)
+       01 WS-DETALLE-IMPRESOS.
+          05 FILLER                PIC X(01).
           05 FILLER                PIC X(29)
-                                   VALUE "TOTAL DE EMPLEADOS IMPRESOS: ".
+                                   VALUE "TOTAL DE EMPLEADOS IMPRESOS:".
           05 WS-TOT-IMPRESOS       PIC 9(05).
-          05 FILLER                PIC X(45)    VALUE SPACES.                                                                I
+          05 FILLER                PIC X(45)    VALUE SPACES.
 
        LINKAGE SECTION.
        01 LK-FECHA.
@@ -80,4 +80,25 @@
           05 LK-MES                PIC 9(02).
           05 LK-ANIO               PIC 9(04).
 
-       PROCEDURE DIVISION USING LK-FECHA.
+       PROCEDURE DIVISION.
+       010-INICIO.
+           OPEN INPUT  EMPLEADOS
+                OUTPUT REPORTE
+           WRITE REG-REPORTE FROM WS-TITULO-1.
+       020-LEE.
+           READ EMPLEADOS INTO WS-REG-EMPLEADOS AT END
+                GO TO 100-FIN.
+           ADD 1 TO WS-LEIDOS-EMP
+           MOVE WS-REG-EMPLEADOS TO WS-DET-TODO
+           WRITE REG-REPORTE FROM WS-DETALLE
+           ADD 1 TO WS-IMPRESOS
+           GO TO 020-LEE.
+
+       100-FIN.
+           MOVE WS-LEIDOS-EMP TO WS-TOT-LEIDOS
+           WRITE REG-REPORTE FROM WS-DETALLE-LEIDOS
+           MOVE WS-IMPRESOS   TO WS-TOT-IMPRESOS
+           WRITE REG-REPORTE FROM WS-DETALLE-IMPRESOS
+           CLOSE EMPLEADOS
+                 REPORTE
+           GOBACK.
